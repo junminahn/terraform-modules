@@ -16,19 +16,14 @@ resource "aws_acm_certificate" "this" {
   }
 }
 
-# Elastic Load Balancer resource, also known as a "Classic Load Balancer" 
-data "aws_elb" "this" {
-  name = var.load_balancer_name
-}
-
 resource "aws_route53_record" "www" {
   zone_id = data.aws_route53_zone.this.zone_id
   name    = aws_acm_certificate.this.domain_name
   type    = "A"
 
   alias {
-    name                   = data.aws_elb.this.dns_name
-    zone_id                = data.aws_elb.this.zone_id
+    name                   = var.load_balancer_dns_name
+    zone_id                = var.load_balancer_zone_id
     evaluate_target_health = false
   }
 }
